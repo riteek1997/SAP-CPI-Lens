@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPI Lens Pro – X-Ray Vision for SAP Integration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #060A12;
+    --bg1: #0C1220;
+    --bg2: #111827;
+    --bg3: #1A2236;
+    --amber: #F0A500;
+    --amber-dim: #C47F00;
+    --amber-glow: rgba(240,165,0,0.12);
+    --teal: #00C6B8;
+    --teal-dim: rgba(0,198,184,0.15);
+    --blue: #4488FF;
+    --blue-dim: rgba(68,136,255,0.12);
+    --red: #FF5555;
+    --green: #3ED98C;
+    --txt: #EEF2FF;
+    --txt2: #8B9BBF;
+    --txt3: #4A5568;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --amber-border: rgba(240,165,0,0.25);
+    --font: 'DM Sans', sans-serif;
+    --head: 'Syne', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+    --radius: 12px;
+    --radius-lg: 20px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  }
+
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--txt); font-family: var(--font); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%;
+    height: 64px;
+    background: rgba(6,10,18,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .nav-logo-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+  }
+  .nav-logo-text { font-family: var(--head); font-weight: 700; font-size: 17px; color: var(--txt); }
+  .nav-logo-text span { color: var(--amber); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { text-decoration: none; color: var(--txt2); font-size: 14px; font-weight: 500; transition: color .2s; }
+  .nav-links a:hover { color: var(--txt); }
+  .nav-cta {
+    background: var(--amber); color: #06080E;
+    font-family: var(--head); font-weight: 700; font-size: 14px;
+    padding: 9px 20px; border-radius: 8px; text-decoration: none;
+    transition: opacity .2s, transform .2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .nav-cta:hover { opacity: .9; transform: translateY(-1px); }
+
+  /* SECTIONS */
+  section { padding: 96px 5%; }
+  .label {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    color: var(--amber); letter-spacing: .1em; text-transform: uppercase;
+    background: var(--amber-glow); border: 1px solid var(--amber-border);
+    padding: 5px 12px; border-radius: 99px; margin-bottom: 20px;
+  }
+  .label::before { content: ''; width: 6px; height: 6px; background: var(--amber); border-radius: 50%; animation: blink 2s infinite; }
+  @keyframes blink { 0%,100%{opacity:1}50%{opacity:.2} }
+
+  h1 { font-family: var(--head); font-weight: 800; font-size: clamp(40px,6vw,80px); line-height: 1.05; letter-spacing: -2px; }
+  h2 { font-family: var(--head); font-weight: 700; font-size: clamp(28px,4vw,44px); line-height: 1.15; letter-spacing: -1px; }
+  h3 { font-family: var(--head); font-weight: 600; font-size: 18px; }
+  .amber { color: var(--amber); }
+  .teal { color: var(--teal); }
+  .muted { color: var(--txt2); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+    padding-top: 70px; padding-bottom: 76px;
+    position: relative; overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(240,165,0,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #hero::after {
+    content: '';
+    position: absolute; bottom: -100px; left: 10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0,198,184,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow { margin-bottom: 24px; }
+  .hero-desc { font-size: 18px; color: var(--txt2); line-height: 1.7; max-width: 520px; margin: 20px 0 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .btn-primary {
+    background: var(--amber); color: #06080E;
+    font-family: var(--head); font-weight: 700; font-size: 15px;
+    padding: 14px 28px; border-radius: 10px; text-decoration: none;
+    transition: opacity .2s, transform .2s; display: inline-flex; align-items: center; gap: 8px;
+    box-shadow: 0 0 40px rgba(240,165,0,0.3);
+  }
+  .btn-primary:hover { opacity: .92; transform: translateY(-2px); }
+  .btn-ghost {
+    border: 1px solid var(--border2); color: var(--txt);
+    font-family: var(--head); font-weight: 600; font-size: 15px;
+    padding: 13px 24px; border-radius: 10px; text-decoration: none;
+    transition: border-color .2s, background .2s; display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost:hover { border-color: var(--amber-border); background: var(--amber-glow); }
+
+  .hero-badges { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+  .badge {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--bg1); border: 1px solid var(--border);
+    padding: 6px 12px; border-radius: 99px;
+    font-size: 12px; color: var(--txt2);
+  }
+  .badge svg { width: 14px; height: 14px; }
+
+  /* EXTENSION PREVIEW */
+  .hero-visual { position: relative; display: flex; justify-content: center; align-items: center; }
+  .lens-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid var(--amber-border);
+    animation: pulse-ring 3s ease-in-out infinite;
+  }
+  .lens-ring:nth-child(1) { width: 340px; height: 340px; opacity: .5; animation-delay: 0s; }
+  .lens-ring:nth-child(2) { width: 440px; height: 440px; opacity: .3; animation-delay: .8s; }
+  .lens-ring:nth-child(3) { width: 540px; height: 540px; opacity: .15; animation-delay: 1.6s; }
+  @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.03);opacity:.2} }
+
+  .ext-card {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    width: 340px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px rgba(240,165,0,0.08);
+    overflow: hidden;
+    position: relative; z-index: 2;
+    animation: float 4s ease-in-out infinite;
+  }
+  @keyframes float { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
+  .ext-header {
+    background: var(--bg3);
+    padding: 14px 16px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .ext-logo { font-family: var(--head); font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .ext-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+  .ext-tenant { font-family: var(--mono); font-size: 10px; color: var(--teal); background: var(--teal-dim); padding: 3px 8px; border-radius: 4px; }
+
+  .ext-body { padding: 16px; }
+  .ext-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .ext-stat {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  .ext-stat-val { font-family: var(--head); font-size: 22px; font-weight: 700; }
+  .ext-stat-lbl { font-size: 10px; color: var(--txt2); margin-top: 2px; }
+  .stat-green { color: var(--green); }
+  .stat-red { color: var(--red); }
+  .stat-amber { color: var(--amber); }
+  .stat-blue { color: var(--blue); }
+
+  .ext-row { display: flex; gap: 6px; margin-bottom: 10px; }
+  .ext-pill {
+    flex: 1; background: var(--bg1); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 10px; font-size: 10px; color: var(--txt2);
+    text-align: center;
+  }
+  .ext-pill span { display: block; font-family: var(--head); font-size: 14px; font-weight: 700; color: var(--txt); }
+
+  .ext-heat { height: 32px; display: flex; gap: 2px; align-items: flex-end; margin-bottom: 10px; }
+  .heat-col { flex: 1; border-radius: 3px 3px 0 0; }
+
+  .ext-iflow {
+    background: var(--bg1); border: 1px solid var(--border);
+    border-radius: 6px; padding: 8px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 6px; font-size: 11px;
+  }
+  .ext-iflow-name { color: var(--txt); font-weight: 500; }
+  .ext-iflow-val { color: var(--amber); font-family: var(--mono); font-size: 10px; }
+
+  .ext-fab {
+    position: absolute; bottom: 12px; right: 12px;
+    width: 32px; height: 32px;
+    background: var(--amber); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 0 16px rgba(240,165,0,0.5);
+    font-size: 14px; font-weight: 800; color: #06080E;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: var(--bg1);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 5%;
+    display: flex; gap: 0; overflow-x: auto;
+  }
+  .stat-item {
+    flex: 1; min-width: 140px;
+    text-align: center;
+    padding: 0 24px;
+  }
+  .stat-item + .stat-item { border-left: 1px solid var(--border); }
+  .stat-num { font-family: var(--head); font-size: 36px; font-weight: 800; color: var(--amber); }
+  .stat-lbl { font-size: 13px; color: var(--txt2); margin-top: 2px; }
+
+  /* FEATURES GRID */
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 20px; }
+  .feature-card {
+    background: var(--bg1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    transition: border-color .3s, transform .3s, box-shadow .3s;
+    position: relative; overflow: hidden;
+  }
+  .feature-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--card-accent, var(--amber)), transparent);
+    opacity: 0; transition: opacity .3s;
+  }
+  .feature-card:hover { border-color: var(--border2); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+  .feature-card:hover::before { opacity: 1; }
+  .feature-card.teal { --card-accent: var(--teal); }
+  .feature-card.blue { --card-accent: var(--blue); }
+  .feature-card.green { --card-accent: var(--green); }
+  .feature-card.red { --card-accent: var(--red); }
+
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; margin-bottom: 16px;
+    background: var(--amber-glow); border: 1px solid var(--amber-border);
+  }
+  .feature-card.teal .feature-icon { background: var(--teal-dim); border-color: rgba(0,198,184,0.25); }
+  .feature-card.blue .feature-icon { background: var(--blue-dim); border-color: rgba(68,136,255,0.25); }
+  .feature-card.green .feature-icon { background: rgba(62,217,140,0.1); border-color: rgba(62,217,140,0.25); }
+  .feature-card.red .feature-icon { background: rgba(255,85,85,0.1); border-color: rgba(255,85,85,0.25); }
+  .feature-card p { font-size: 14px; color: var(--txt2); line-height: 1.65; margin-top: 8px; }
+
+  /* SECTION HEADER */
+  .section-header { margin-bottom: 56px; }
+  .section-header.center { text-align: center; }
+  .section-header p { font-size: 17px; color: var(--txt2); max-width: 600px; margin-top: 14px; line-height: 1.7; }
+  .section-header.center p { margin: 14px auto 0; }
+
+  /* TOOLS SECTION */
+  .tools-showcase {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;
+  }
+  .tools-list { display: flex; flex-direction: column; gap: 12px; }
+  .tool-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--bg1); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 18px;
+    transition: border-color .2s;
+  }
+  .tool-item:hover { border-color: var(--amber-border); }
+  .tool-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .tool-info h4 { font-family: var(--head); font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .tool-info p { font-size: 13px; color: var(--txt2); line-height: 1.55; }
+
+  .tools-panel {
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: var(--radius-lg); padding: 24px;
+    box-shadow: var(--shadow);
+  }
+  .tools-panel-header { font-family: var(--mono); font-size: 11px; color: var(--amber); margin-bottom: 16px; letter-spacing: .08em; }
+  .diff-view { font-family: var(--mono); font-size: 11px; border-radius: 8px; overflow: hidden; }
+  .diff-line { padding: 4px 12px; display: flex; gap: 10px; }
+  .diff-line.added { background: rgba(62,217,140,0.08); color: #3ED98C; }
+  .diff-line.removed { background: rgba(255,85,85,0.08); color: #FF7070; }
+  .diff-line.context { color: var(--txt3); }
+  .diff-line .marker { width: 14px; flex-shrink: 0; }
+
+  .sim-tabs { display: flex; gap: 6px; margin-bottom: 14px; }
+  .sim-tab {
+    font-size: 11px; padding: 5px 12px; border-radius: 6px;
+    cursor: default; font-family: var(--mono);
+  }
+  .sim-tab.active { background: var(--amber-glow); color: var(--amber); border: 1px solid var(--amber-border); }
+  .sim-tab.inactive { color: var(--txt3); border: 1px solid var(--border); }
+  .sim-output {
+    background: var(--bg); border-radius: 8px; padding: 12px;
+    font-family: var(--mono); font-size: 11px; color: var(--green);
+    border: 1px solid var(--border);
+  }
+
+  /* PRIVACY */
+  #privacy {
+    background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+    border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  }
+  .privacy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .privacy-badge-large {
+    background: var(--amber-glow); border: 1px solid var(--amber-border);
+    border-radius: var(--radius-lg); padding: 32px; text-align: center;
+  }
+  .privacy-icon { font-size: 64px; margin-bottom: 16px; display: block; }
+  .privacy-badge-large h3 { font-family: var(--head); font-size: 22px; margin-bottom: 8px; }
+  .privacy-badge-large p { color: var(--txt2); font-size: 14px; }
+  .privacy-checks { display: flex; flex-direction: column; gap: 16px; }
+  .privacy-check { display: flex; align-items: flex-start; gap: 14px; }
+  .check-icon { width: 28px; height: 28px; border-radius: 50%; background: rgba(62,217,140,0.15); border: 1px solid rgba(62,217,140,0.3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; margin-top: 2px; }
+  .privacy-check h4 { font-family: var(--head); font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .privacy-check p { font-size: 13px; color: var(--txt2); }
+
+  /* PRICING */
+  .pricing-layout { display: flex; flex-direction: column; gap: 20px; max-width: 1100px; margin: 0 auto; }
+  .pricing-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: stretch; }
+  .price-card {
+    background: var(--bg1); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 32px;
+    transition: transform .3s; position: relative;
+    display: flex; flex-direction: column;
+  }
+  .price-card.featured {
+    background: linear-gradient(135deg, rgba(240,165,0,0.06) 0%, rgba(240,165,0,0.02) 100%);
+    border-color: var(--amber-border);
+    box-shadow: 0 0 0 1px rgba(240,165,0,0.08), 0 20px 40px rgba(0,0,0,0.4);
+  }
+  .price-card:hover { transform: translateY(-4px); }
+  .price-card .btn-price { margin-top: auto; }
+  .price-tier { font-family: var(--mono); font-size: 11px; color: var(--txt2); letter-spacing: .1em; margin-bottom: 8px; }
+  .price-name { font-family: var(--head); font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+  .price-name.price-name-amber { color: var(--amber); }
+  .price-amount { display: flex; align-items: baseline; gap: 4px; margin-bottom: 4px; flex-wrap: wrap; }
+  .price-amount .price-inline-period { font-size: 18px; color: var(--txt2); font-weight: 500; margin-left: 2px; }
+  .price-currency { font-size: 20px; color: var(--txt2); font-family: var(--head); }
+  .price-num { font-family: var(--head); font-size: 52px; font-weight: 800; color: var(--amber); line-height: 1; }
+  .price-num.price-num-free { color: var(--txt); }
+  .price-sub-usd { font-size: 13px; color: var(--txt3); margin-bottom: 10px; }
+  .price-tagline { font-size: 14px; color: var(--amber); font-weight: 600; margin-bottom: 10px; font-family: var(--head); }
+  .price-blurb { font-size: 14px; color: var(--txt2); line-height: 1.55; margin-bottom: 20px; }
+  .price-period { font-size: 14px; color: var(--txt2); margin-bottom: 20px; }
+  .price-features-head {
+    font-family: var(--mono); font-size: 10px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; color: var(--amber); margin: 4px 0 14px;
+  }
+  .price-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; flex: 1; }
+  .price-features li { font-size: 14px; color: var(--txt2); display: flex; align-items: flex-start; gap: 10px; }
+  .price-features li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+  .price-features.is-pro li::before { content: '★'; color: var(--amber); font-size: 12px; line-height: 1.4; }
+  .price-features li.dim::before { content: '–'; color: var(--txt3); }
+  .price-features li.dim { color: var(--txt3); }
+  .btn-price {
+    display: block; width: 100%; text-align: center;
+    padding: 14px; border-radius: 10px;
+    font-family: var(--head); font-weight: 700; font-size: 15px;
+    text-decoration: none; transition: all .2s;
+  }
+  .btn-price.primary { background: var(--amber); color: #06080E; box-shadow: 0 0 30px rgba(240,165,0,0.25); }
+  .btn-price.primary:hover { opacity: .9; box-shadow: 0 0 40px rgba(240,165,0,0.4); }
+  .btn-price.ghost { border: 1px solid var(--border2); color: var(--txt); }
+  .btn-price.ghost:hover { border-color: var(--amber-border); background: var(--amber-glow); }
+  .btn-price.current {
+    background: var(--bg2); border: 1px solid var(--border);
+    color: var(--txt3); cursor: default; pointer-events: none;
+  }
+  .price-card-annual {
+    background: var(--bg1); border: 1px solid var(--border2);
+    border-radius: var(--radius-lg); padding: 24px 28px;
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px;
+    transition: transform .3s, border-color .2s;
+  }
+  .price-card-annual:hover { transform: translateY(-2px); border-color: var(--amber-border); }
+  .annual-left { flex: 1; min-width: 220px; }
+  .annual-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+  .annual-head .price-name { margin-bottom: 0; display: flex; align-items: center; gap: 8px; }
+  .save-pill {
+    background: var(--green); color: #06080E;
+    font-family: var(--head); font-size: 11px; font-weight: 700;
+    padding: 5px 12px; border-radius: 99px; letter-spacing: .04em;
+  }
+  .annual-tag { font-size: 14px; color: var(--txt2); margin-bottom: 10px; }
+  .annual-prices { font-size: 15px; color: var(--txt); }
+  .annual-prices strong { font-family: var(--head); font-size: 26px; font-weight: 800; color: var(--amber); }
+  .annual-prices .annual-usd { display: block; font-size: 13px; color: var(--txt3); margin-top: 4px; font-weight: 400; }
+  .annual-cta { flex-shrink: 0; }
+  .annual-cta .btn-price { width: auto; min-width: 220px; padding-left: 28px; padding-right: 28px; }
+  .pricing-footnote { text-align: center; color: var(--txt3); font-size: 13px; margin-top: 28px; max-width: 640px; margin-left: auto; margin-right: auto; }
+
+  /* BROWSERS */
+  .browsers-row { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+  .browser-card {
+    background: var(--bg1); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 28px 32px 26px;
+    text-align: center; flex: 1; min-width: 180px; max-width: 240px;
+    transition: border-color .2s, transform .2s;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .browser-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+  .browser-logo {
+    display: flex; align-items: center; justify-content: center;
+    width: 84px; height: 84px; margin: 0 0 16px; flex-shrink: 0;
+    padding: 14px; box-sizing: border-box;
+    border-radius: 22px;
+    background: linear-gradient(165deg, rgba(255,255,255,0.05) 0%, transparent 42%), var(--bg2);
+    border: 1px solid var(--border2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 24px rgba(0,0,0,0.35);
+  }
+  .browser-logo img {
+    max-width: 52px;
+    max-height: 52px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 12px;
+  }
+  .browser-name { font-family: var(--head); font-weight: 700; font-size: 16px; margin-bottom: 4px; width: 100%; }
+  .browser-status { font-size: 12px; color: var(--green); font-family: var(--mono); width: 100%; }
+
+  /* FOOTER */
+  footer {
+    background: var(--bg1); border-top: 1px solid var(--border);
+    padding: 48px 5% 32px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+  .footer-brand p { color: var(--txt2); font-size: 14px; line-height: 1.65; margin: 12px 0 20px; max-width: 280px; }
+  .footer-col h5 { font-family: var(--head); font-weight: 600; font-size: 13px; color: var(--txt2); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 16px; }
+  .footer-col a { display: block; color: var(--txt2); text-decoration: none; font-size: 14px; margin-bottom: 10px; transition: color .2s; }
+  .footer-col a:hover { color: var(--txt); }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 24px; flex-wrap: wrap; gap: 12px; }
+  .footer-bottom p { font-size: 13px; color: var(--txt3); }
+  .theme-note { font-family: var(--mono); font-size: 11px; color: var(--txt3); display: flex; align-items: center; gap: 6px; }
+
+  /* CATEGORY SECTIONS */
+  .cat-section { padding: 80px 5%; }
+  .cat-section:nth-child(even) { background: var(--bg1); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); margin: 0 5%; }
+
+  /* MARQUEE */
+  .marquee-wrap { overflow: hidden; padding: 20px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg1); }
+  .marquee { display: flex; gap: 40px; animation: marquee 30s linear infinite; width: max-content; }
+  @keyframes marquee { from{transform:translateX(0)}to{transform:translateX(-50%)} }
+  .marquee-item { display: flex; align-items: center; gap: 10px; color: var(--txt3); font-size: 13px; font-family: var(--mono); white-space: nowrap; }
+  .marquee-dot { width: 4px; height: 4px; background: var(--amber); border-radius: 50%; }
+
+  /* ANIMATIONS */
+  .fade-up { opacity: 0; transform: translateY(30px); transition: opacity .7s, transform .7s; }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--txt3); }
+
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .tools-showcase { grid-template-columns: 1fr; }
+    .privacy-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+    .stats-bar { gap: 20px; }
+    .pricing-row { grid-template-columns: 1fr; }
+    .annual-cta .btn-price { width: 100%; }
+  }
+  @media (max-width: 600px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img class="nav-logo-icon" src="images/logo.png" alt="CPI Lens " width="36" height="36" />
+    <span class="nav-logo-text">CPI Lens </span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#analytics">Analytics</a></li>
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#privacy">Privacy</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+  </ul>
+  <a href="#pricing" class="nav-cta">Get CPI Lens Pro →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="label">Browser Extension for SAP CPI</span>
+    </div>
+    <h1>X-Ray Vision<br>for SAP <span class="amber">Integration Suite</span></h1>
+    <p class="hero-desc">
+      Supercharge your CPI workflow with real-time analytics, runtime intelligence, BPMN diff views, simulators, and 30+ power tools — all without leaving your browser.
+    </p>
+    <div class="hero-btns">
+      <a href="https://chromewebstore.google.com/detail/cpi-lens-sap-integration/hojcibdjgfibcpfkcgcepblnmmepinhh" class="btn-primary" target="_blank" rel="noopener noreferrer">Chrome Web Store</a>
+      <a href="https://microsoftedge.microsoft.com/addons/detail/cpi-lens-sap-integration/jccgihhnjabampjlacooeejjmcbbkgjf" class="btn-ghost" target="_blank" rel="noopener noreferrer">Microsoft Edge Add-ons</a>
+      <a href="#features" class="btn-ghost">Explore Features ↓</a>
+    </div>
+    <div class="hero-badges">
+      <span class="badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        100% Client-Side
+      </span>
+      <span class="badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        Zero Data Collection
+      </span>
+      <span class="badge">🌙 Light &amp; Dark Theme</span>
+      <span class="badge">🔒 Secure by Design</span>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="lens-ring"></div>
+    <div class="lens-ring"></div>
+    <div class="lens-ring"></div>
+    <div class="ext-card">
+      <div class="ext-header">
+        <div class="ext-logo"><div class="ext-dot"></div>CPI Lens </div>
+        <div class="ext-tenant">Development</div>
+      </div>
+      <div class="ext-body">
+        <div class="ext-stats">
+          <div class="ext-stat"><div class="ext-stat-val stat-green">12,840</div><div class="ext-stat-lbl">✓ Success</div></div>
+          <div class="ext-stat"><div class="ext-stat-val stat-red">23</div><div class="ext-stat-lbl">✗ Failed</div></div>
+          <div class="ext-stat"><div class="ext-stat-val stat-amber">5</div><div class="ext-stat-lbl">⬆ Escalated</div></div>
+          <div class="ext-stat"><div class="ext-stat-val stat-blue">142</div><div class="ext-stat-lbl">⟳ Processing</div></div>
+        </div>
+        <div class="ext-row">
+          <div class="ext-pill"><span>1,204</span>Past Hour</div>
+          <div class="ext-pill"><span>980</span>Avg/hr</div>
+          <div class="ext-pill"><span>2,310</span>Peak/hr</div>
+        </div>
+        <div class="ext-heat">
+          <div class="heat-col" style="height:40%;background:rgba(240,165,0,0.2)"></div>
+          <div class="heat-col" style="height:55%;background:rgba(240,165,0,0.3)"></div>
+          <div class="heat-col" style="height:30%;background:rgba(240,165,0,0.2)"></div>
+          <div class="heat-col" style="height:80%;background:rgba(240,165,0,0.5)"></div>
+          <div class="heat-col" style="height:65%;background:rgba(240,165,0,0.4)"></div>
+          <div class="heat-col" style="height:90%;background:rgba(240,165,0,0.6)"></div>
+          <div class="heat-col" style="height:70%;background:rgba(240,165,0,0.45)"></div>
+          <div class="heat-col" style="height:45%;background:rgba(240,165,0,0.28)"></div>
+          <div class="heat-col" style="height:60%;background:rgba(240,165,0,0.38)"></div>
+          <div class="heat-col" style="height:100%;background:rgba(240,165,0,0.7)"></div>
+          <div class="heat-col" style="height:75%;background:rgba(240,165,0,0.48)"></div>
+          <div class="heat-col" style="height:50%;background:rgba(240,165,0,0.32)"></div>
+        </div>
+        <div class="ext-iflow"><span class="ext-iflow-name">Order_To_SAP_iFlow</span><span class="ext-iflow-val">4,210 msg</span></div>
+        <div class="ext-iflow"><span class="ext-iflow-name">HR_Replication_Flow</span><span class="ext-iflow-val">2,980 msg</span></div>
+        <div class="ext-iflow"><span class="ext-iflow-name">Invoice_Processor_v2</span><span class="ext-iflow-val">1,847 msg</span></div>
+      </div>
+      <div class="ext-fab">L</div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num">30+</div><div class="stat-lbl">Power Features</div></div>
+  <div class="stat-item"><div class="stat-num">3</div><div class="stat-lbl">Browsers Supported</div></div>
+  <div class="stat-item"><div class="stat-num">0</div><div class="stat-lbl">Data Collected</div></div>
+  <div class="stat-item"><div class="stat-num">24h</div><div class="stat-lbl">Rolling Analytics</div></div>
+  <div class="stat-item"><div class="stat-num">100%</div><div class="stat-lbl">Client-Side Execution</div></div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee">
+    <span class="marquee-item"><span class="marquee-dot"></span>Message Processing Analytics</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>iFlow Version Diff</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Groovy & XSLT Simulator</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>SLA Breach Indicator</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Expiry Tracker</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Process Call Mindmap</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Ghosted Artifacts</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Excel Export</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Global iFlow Search</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>MPL Viewer</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Runtime Health</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Duplicate & Test iFlows</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Tenant Identification</span>  
+    <span class="marquee-item"><span class="marquee-dot"></span>Throughput KPIs</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Message Trends Over Time</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>24h Rolling Heat Map</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Top 3 Consumer iFlows</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Processing Time Insights</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Shortcut to unlock artifacts/packages</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>TSD generator</span>
+
+
+    <!-- duplicate for seamless loop -->
+    <span class="marquee-item"><span class="marquee-dot"></span>Message Processing Analytics</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>iFlow Version Diff</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Groovy & XSLT Simulator</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>SLA Breach Indicator</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Expiry Tracker</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Process Call Mindmap</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Ghosted Artifacts</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Excel Export</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Global iFlow Search</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>MPL Viewer</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Runtime Health</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Duplicate & Test iFlows</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Tenant Identification</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Throughput KPIs</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Message Trends Over Time</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>24h Rolling Heat Map</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Top 3 Consumer iFlows</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Processing Time Insights</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Shortcut to unlock artifacts/packages</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>TSD generator</span>
+  </div>
+</div>
+
+<!-- ANALYTICS SECTION -->
+<section id="analytics" style="padding:96px 5%">
+  <div class="section-header fade-up">
+    <span class="label">Analytics & Monitoring</span>
+    <h2>Instant visibility into your<br>integration health</h2>
+    <p>Know exactly what's happening on your CPI tenant at a glance — message success rates, throughput, trends, and the integrations consuming the most load.</p>
+  </div>
+  <div class="features-grid fade-up">
+    <div class="feature-card">
+      <div class="feature-icon">📡</div>
+      <h3>Tenant Identification</h3>
+      <p>Instantly identify the active CPI tenant with clear visual cues. Never lose track of which environment you're operating on.</p>
+    </div>
+    <div class="feature-card teal">
+      <div class="feature-icon">📊</div>
+      <h3>Message Processing Analytics</h3>
+      <p>Visualize Success, Failed, Escalated, and Processing messages in real time for instant tenant health checks at a glance.</p>
+    </div>
+    <div class="feature-card blue">
+      <div class="feature-icon">⚡</div>
+      <h3>Throughput KPIs</h3>
+      <p>Track message count for the past hour, average/hour, peak/hour, and today's total — your most critical throughput metrics in one panel.</p>
+    </div>
+    <div class="feature-card green">
+      <div class="feature-icon">📈</div>
+      <h3>Message Trends Over Time</h3>
+      <p>Analyze message volume trends for the last 1h, 6h, 12h, Today, and 24h directly in CPI without switching contexts or tools.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔥</div>
+      <h3>24h Rolling Heat Map</h3>
+      <p>Visualize traffic density across a 24-hour rolling window with sparkline trends — instantly spot peaks, troughs, and anomalies.</p>
+    </div>
+    <div class="feature-card red">
+      <div class="feature-icon">🏆</div>
+      <h3>Top 3 Consumer iFlows</h3>
+      <p>Instantly identify the highest message-consuming integrations to monitor load distribution and prevent bottlenecks.</p>
+    </div>
+    <div class="feature-card red">
+      <div class="feature-icon">❗</div>
+      <h3>Failed Messages List with Filters</h3>
+      <p>Quickly access all failed messages at once placed in one place with grouped by iFlow. </p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RUNTIME SECTION -->
+<section id="features" style="padding:96px 5%;background:var(--bg1);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="section-header fade-up">
+    <span class="label">Runtime Intelligence</span>
+    <h2>Deep insight into your<br>runtime landscape</h2>
+    <p>Go beyond surface-level monitoring. Surface slow integrations, SLA breaches, duplicate behavior, and governance gaps in real time.</p>
+  </div>
+  <div class="features-grid fade-up">
+    <div class="feature-card teal">
+      <div class="feature-icon">⏱️</div>
+      <h3>Processing Time Insights</h3>
+      <p>Identify slow integrations and latency outliers before they impact your business processes — sorted by execution time for quick triage.</p>
+    </div>
+    <div class="feature-card red">
+      <div class="feature-icon">🚨</div>
+      <h3>SLA Breach Indicator</h3>
+      <p>Set your own SLA thresholds and detect iFlows that exceed them. Fully customizable so the alerts match your organization's standards.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧩</div>
+      <h3>Runtime Health Visibility</h3>
+      <p>Detect idle, inactive, or unused iFlows for cleanup and governance. Keep your runtime lean, organized, and cost-efficient.</p>
+    </div>
+    <div class="feature-card blue">
+      <div class="feature-icon">📦</div>
+      <h3>Categorized Runtime Insights</h3>
+      <p>Get detailed breakdowns of how many iFlows, adapters, mappings, and scripts are currently deployed and running in your landscape.</p>
+    </div>
+    <div class="feature-card green">
+      <div class="feature-icon">🔍</div>
+      <h3>Duplicate & Test iFlows</h3>
+      <p>Surface potential duplicate integrations and unusual runtime behavior in real time to eliminate confusion and keep your tenant clean.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">👻</div>
+      <h3>Ghosted Artifacts</h3>
+      <p>Identify iFlows that exist only in runtime but have no designtime artifact — preventing orphaned deployments that can't be updated.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TOOLS SECTION -->
+<section id="tools" style="padding:96px 5%">
+  <div class="section-header fade-up">
+    <span class="label">Developer Tools</span>
+    <h2>Built for CPI developers<br>who move fast</h2>
+    <p>From BPMN diff viewers to XSLT simulators — every tool you reach for daily, now built directly into your browser.</p>
+  </div>
+  <div class="tools-showcase fade-up">
+    <div class="tools-list">
+      <div class="tool-item">
+        <div class="tool-icon">🔀</div>
+        <div class="tool-info">
+          <h4>iFlow Version Diff Viewer</h4>
+          <p>Compare any two versions of an iFlow using both visual BPMN-based diff and XML-based diff modes side by side.</p>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon">🧪</div>
+        <div class="tool-info">
+          <h4>Simulators</h4>
+          <p>Instantly test and validate XSLT mappings, Value Mapping tables, and Groovy scripts without deploying anything.</p>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon">🛠️</div>
+        <div class="tool-info">
+          <h4>Tools & Utilities</h4>
+          <p>Built-in compare tools, converters, formatters, schema validators, and Technical Specs generators to accelerate daily development.</p>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon">🧠</div>
+        <div class="tool-info">
+          <h4>Process Call Mindmap</h4>
+          <p>Visualize your entire process architecture with dynamic mindmaps revealing all called subprocesses including deeply nested ones.</p>
+        </div>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon">📜</div>
+        <div class="tool-info">
+          <h4>iFlow Timeline Visualization</h4>
+          <p>View a detailed version history for any iFlow including when it was created, changed, or updated, and by whom.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tools-panel">
+      <div class="tools-panel-header">// iFlow Version Diff — BPMN Mode</div>
+      <div class="sim-tabs">
+        <div class="sim-tab active">BPMN Diff</div>
+        <div class="sim-tab inactive">XML Diff</div>
+      </div>
+      <div class="diff-view">
+        <div class="diff-line context"><span class="marker"> </span>&lt;IntegrationFlow name="Order_Proc"&gt;</div>
+        <div class="diff-line removed"><span class="marker">−</span>&lt;!-- v1.2: Simple mapping step --&gt;</div>
+        <div class="diff-line removed"><span class="marker">−</span>&lt;Step type="Mapping" id="step1"/&gt;</div>
+        <div class="diff-line added"><span class="marker">+</span>&lt;!-- v1.3: Enhanced with validation --&gt;</div>
+        <div class="diff-line added"><span class="marker">+</span>&lt;Step type="Mapping" id="step1"/&gt;</div>
+        <div class="diff-line added"><span class="marker">+</span>&lt;Step type="Validator" id="step2"/&gt;</div>
+        <div class="diff-line context"><span class="marker"> </span>&lt;Router id="router1"&gt;</div>
+        <div class="diff-line removed"><span class="marker">−</span>  &lt;Route condition="error" /&gt;</div>
+        <div class="diff-line added"><span class="marker">+</span>  &lt;Route condition="error" target="dlq"/&gt;</div>
+        <div class="diff-line context"><span class="marker"> </span>&lt;/Router&gt;</div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="tools-panel-header">// XSLT Simulator</div>
+        <div class="sim-tabs">
+          <div class="sim-tab active">XSLT</div>
+          <div class="sim-tab inactive">Groovy</div>
+          <div class="sim-tab inactive">Value Map</div>
+        </div>
+        <div class="sim-output">
+Output: &lt;Order&gt;<br>
+&nbsp;&nbsp;&lt;ID&gt;ORD-20241103&lt;/ID&gt;<br>
+&nbsp;&nbsp;&lt;Status&gt;CONFIRMED&lt;/Status&gt;<br>
+&nbsp;&nbsp;&lt;Amount currency="EUR"&gt;4250.00&lt;/Amount&gt;<br>
+&lt;/Order&gt;<br>
+<span style="color:var(--teal)">✓ Transform successful — 12ms</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GOVERNANCE -->
+<section style="padding:96px 5%;background:var(--bg1);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="section-header fade-up">
+    <span class="label">Governance & Discovery</span>
+    <h2>Find it, search it,<br><span class="amber">track everything</span></h2>
+    <p>From global search to certificate expiry tracking — CPI Lens Pro keeps your entire tenant under control.</p>
+  </div>
+  <div class="features-grid fade-up">
+    <div class="feature-card blue">
+      <div class="feature-icon">🔎</div>
+      <h3>Global iFlow Search</h3>
+      <p>Find any iFlow on your tenant instantly — by exact name, partial ID, keyword, or description. Across all packages at once.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⭐</div>
+      <h3>Favourites & Smart Tags</h3>
+      <p>Bookmark frequently used iFlows for instant access. Quick message summary and smart tagging filters keep your workflow razor-sharp.</p>
+    </div>
+    <div class="feature-card teal">
+      <div class="feature-icon">💤</div>
+      <h3>Idle iFlows Detector</h3>
+      <p>Detect unused or inactive integrations that are consuming resources without delivering value — and take action to clean them up.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧹</div>
+      <h3>Unused References & Ext. Params</h3>
+      <p>Scan your iFlows for configuration parameters, variables, or external references that are defined but never used — reduce technical debt.</p>
+    </div>
+    <div class="feature-card green">
+      <div class="feature-icon">⌛</div>
+      <h3>Expiry Tracker</h3>
+      <p>Track expiring certificates and keys with proactive alerts — avoid unexpected integration failures caused by silent credential expiry.</p>
+    </div>
+    <div class="feature-card blue">
+      <div class="feature-icon">📋</div>
+      <h3>Personal Notes</h3>
+      <p>Add and view personal notes or reminders related to your work, directly alongside the iFlows and artifacts they concern.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXPORT & REPORTING -->
+<section style="padding:96px 5%">
+  <div class="section-header fade-up">
+    <span class="label">Reporting & Export</span>
+    <h2>Take your insights<br>beyond the browser</h2>
+    <p>Export data, download MPL logs, unlock artifact shortcuts — productivity features built for busy integration teams.</p>
+  </div>
+  <div class="features-grid fade-up">
+    <div class="feature-card">
+      <div class="feature-icon">📥</div>
+      <h3>Excel Export</h3>
+      <p>Download comprehensive reports for Idle, Ghosted, Runtime iFlows, and Message Activities — ready to share with your team or management.</p>
+    </div>
+    <div class="feature-card teal">
+      <div class="feature-icon">📊</div>
+      <h3>MPL Viewer</h3>
+      <p>Download Message Processing Logs locally and view them offline at any time — no more losing log context when sessions expire.</p>
+    </div>
+    <div class="feature-card blue">
+      <div class="feature-icon">📄</div>
+      <h3>Technical Specification Downloader</h3>
+      <p>Download detailed technical specifications for any iFlow — generate shareable documents for audits, reviews, or documentation in one click.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY SECTION -->
+<section id="privacy">
+  <div class="privacy-grid fade-up">
+    <div class="privacy-badge-large">
+      <span class="privacy-icon">🔒</span>
+      <h3>Secure &amp;<br>Privacy-Friendly</h3>
+      <p style="margin-top:8px">Your integration data never leaves your browser. No servers. No tracking. No exceptions.</p>
+    </div>
+    <div>
+      <span class="label">Privacy by Design</span>
+      <h2 style="margin-bottom:28px">Built for enterprise<br>security standards</h2>
+      <div class="privacy-checks">
+        <div class="privacy-check">
+          <div class="check-icon">✓</div>
+          <div><h4>100% Client-Side Execution</h4><p>All processing happens locally in your browser. Your CPI data and credentials are never transmitted to any external server.</p></div>
+        </div>
+        <div class="privacy-check">
+          <div class="check-icon">✓</div>
+          <div><h4>Zero Data Collection</h4><p>We collect no analytics, telemetry, usage data, or any personally identifiable information whatsoever.</p></div>
+        </div>
+        <div class="privacy-check">
+          <div class="check-icon">✓</div>
+          <div><h4>No External Server Calls</h4><p>CPI Lens Pro makes no outbound requests. Everything runs locally, making it safe for the most restricted enterprise environments.</p></div>
+        </div>
+        <div class="privacy-check">
+          <div class="check-icon">✓</div>
+          <div><h4>Light &amp; Dark Theme</h4><p>Matches your system preference or CPI's interface. Fully comfortable for all-day use in any lighting condition.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="padding:96px 5%">
+  <div class="section-header center fade-up">
+    <span class="label">Pricing</span>
+    <h2>Start free.<br>Upgrade when you're ready.</h2>
+  </div>
+  <div class="pricing-layout fade-up">
+    <div class="pricing-row">
+      <div class="price-card">
+        <div class="price-name" style="margin-bottom:8px">FREE</div>
+        <div class="price-amount">
+          <span class="price-currency">₹</span>
+          <span class="price-num price-num-free">0</span>
+          <span class="price-inline-period">/ month</span>
+        </div>
+        <div class="price-tagline">Always free</div>
+        <p class="price-blurb">Get started with essential CPI tracking for everyday browsing.</p>
+        <ul class="price-features">
+          <li>Tenant Info. (name, env. &amp; logged-in user)</li>
+          <li>Activities (Categorized MPLs &amp; Throughputs KPIs)</li>
+          <li>Trends (msg/Time, msg/Processing time, Top 3 consumers, 24h Heatmap)</li>
+          <li>Favorites (limited)</li>
+          <li>Failures</li>
+          <li>Ghosted Artifacts</li>
+          <li>Expiry Tracker</li>
+          <li>Idle Iflows</li>
+          <li>Duplicates &amp; Tests flows detection</li>
+          <li>Simulators (groovy scripts, XSLT &amp; Value mapping)</li>
+          <li>Tools (compare, formatters, convertors, xsd, X-Path etc.)</li>
+          <li>Shortcut to unlock artifacts (iFlow/Package)</li>
+        </ul>
+        <span class="btn-price current">Current Plan</span>
+      </div>
+      <div class="price-card featured">
+        <div class="price-name price-name-amber">PRO MONTHLY</div>
+        <div class="price-amount">
+          <span class="price-currency">₹</span>
+          <span class="price-num">19</span>
+          <span class="price-inline-period">/ month</span>
+        </div>
+        <div class="price-sub-usd">≈ $0.20 USD / month</div>
+        <p class="price-blurb" style="margin-bottom:16px">Full access to all Pro features.</p>
+        <p class="price-features-head">Everything in Free, plus</p>
+        <ul class="price-features is-pro">
+          <li>Global search for Iflows</li>
+          <li>SLA Breach Indicator (customizable thresholds)</li>
+          <li>Categorized runtime insights</li>
+          <li>IFlow Version Diff</li>
+          <li>Unused Refs/Params</li>
+          <li>IFlow Timeline</li>
+          <li>Process call Mindmap for complex Flows</li>
+          <li>Notes</li>
+          <li>Favorites (Unlimited)</li>
+          <li>Smart Tags for favorites</li>
+          <li>Excel Exports (Runtime, Ghosted, Idle, designtime iflows, package inventory)</li>
+          <li>View and Download iFlow MPLs for Archival</li>
+          <li>Quick shortcut for Deployment Status (Check all artifacts)</li>
+          <li>Technical Specification Doc. generator</li>
+          <li>…and many more coming up soon…</li>
+        </ul>
+        <a href="mailto:support.cpilens@gmail.com?subject=Pro%20Monthly%20Subscription%20%E2%82%B919&body=Hi%2C%0A%0AI%20would%20like%20to%20purchase%20CPI%20Lens%20Pro%20Monthly%20(%E2%82%B919%2Fmonth).%0A%0AName%3A%20%0AEmail%3A%20%0A%0AThanks!" class="btn-price primary">Get Pro Monthly →</a>
+      </div>
+    </div>
+    <div class="price-card-annual">
+      <div class="annual-left">
+        <div class="annual-head">
+          <div class="price-name"><span aria-hidden="true">🛍️</span> Pro Annual</div>
+          <span class="save-pill">SAVE 13%</span>
+        </div>
+        <p class="annual-tag">All Pro features · Best value for power users</p>
+        <div class="annual-prices">
+          <strong>₹199</strong> / year
+          <span class="annual-usd">≈ $2.10 USD / year · ₹16.58/mo effective</span>
+        </div>
+      </div>
+      <div class="annual-cta">
+        <a href="mailto:support.cpilens@gmail.com?subject=Pro%20Annual%20Subscription%20%E2%82%B9199&body=Hi%2C%0A%0AI%20would%20like%20to%20purchase%20CPI%20Lens%20Pro%20Annual%20(%E2%82%B9199%2Fyear).%0A%0AName%3A%20%0AEmail%3A%20%0A%0AThanks!" class="btn-price primary">Get Annual Plan →</a>
+      </div>
+    </div>
+  </div>
+  <p class="pricing-footnote">Prices shown in INR with approximate USD equivalents. The free tier stays on your device at no cost.</p>
+</section>
+
+<!-- BROWSER SUPPORT -->
+<section style="padding:80px 5%;background:var(--bg1);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="section-header center fade-up">
+    <span class="label">Browser Support</span>
+    <h2>Works where you work</h2>
+    <p>CPI Lens Pro is fully supported on all Chromium-based browsers.</p>
+  </div>
+  <div class="browsers-row fade-up">
+    <div class="browser-card">
+      <span class="browser-logo">
+        <img src="images/chrome.jpeg" alt="" width="52" height="52" decoding="async" />
+      </span>
+      <div class="browser-name">Chrome</div>
+      <div class="browser-status">✓ Supported</div>
+    </div>
+    <div class="browser-card">
+      <span class="browser-logo">
+        <img src="images/edge.jpeg" alt="" width="52" height="52" decoding="async" />
+      </span>
+      <div class="browser-name">Edge</div>
+      <div class="browser-status">✓ Supported</div>
+    </div>
+    <div class="browser-card">
+      <span class="browser-logo">
+        <img src="images/brave.png" alt="" width="52" height="52" decoding="async" />
+      </span>
+      <div class="browser-name">Brave</div>
+      <div class="browser-status">✓ Supported</div>
+    </div>
+  </div>
+  <p style="text-align:center;color:var(--txt3);font-size:13px;margin-top:24px;font-family:var(--mono)">
+    💡 Tip: The CPI Lens button appears at the bottom right corner when browsing your SAP CPI tenant.
+  </p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo" style="margin-bottom:8px;display:inline-flex">
+        <img class="nav-logo-icon" src="images/logo.png" alt="CPI Lens " width="36" height="36" />
+        <span class="nav-logo-text">CPI Lens</span>
+      </a>
+      <p>The most comprehensive browser extension for SAP Cloud Platform Integration developers. Built with precision. Designed for speed.</p>
+      <div style="display:flex;gap:10px">
+        <a href="https://chromewebstore.google.com/detail/cpi-lens-sap-integration/hojcibdjgfibcpfkcgcepblnmmepinhh" target="_blank" rel="noopener noreferrer" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--txt2);text-decoration:none;font-size:12px">Chrome Web Store</a>
+        <a href="https://microsoftedge.microsoft.com/addons/detail/cpi-lens-sap-integration/jccgihhnjabampjlacooeejjmcbbkgjf" target="_blank" rel="noopener noreferrer" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--txt2);text-decoration:none;font-size:12px">Edge Add-ons</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Features</h5>
+      <a href="#analytics">Analytics</a>
+      <a href="#features">Runtime Intel</a>
+      <a href="#tools">Dev Tools</a>
+      <a href="#pricing">Pricing</a>
+    </div>
+    <div class="footer-col">
+      <h5>Resources</h5>
+      <a href="https://github.com/riteek1997/CPI_Lens_Extension/blob/main/README.md">Documentation</a>
+      <a href="https://github.com/riteek1997/CPI_Lens_Extension/blob/main/README.md">Changelog</a>
+      <a href="mailto:support.cpilens@gmail.com?subject=Support%20Request">Support</a>
+    </div>
+    <div class="footer-col">
+      <h5>Legal</h5>
+      <a href="#privacy">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 CPI Lens. All rights reserved.</p>
+    <div class="theme-note">🌙 Light & Dark theme supported · 100% client-side · Zero tracking</div>
+  </div>
+</footer>
+
+<script>
+  // Intersection Observer for fade-up animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+  // Animated counter for stats
+  function animateCount(el, target, suffix='') {
+    let start = 0;
+    const step = target / 50;
+    const timer = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = Math.round(start) + suffix;
+      if (start >= target) clearInterval(timer);
+    }, 30);
+  }
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const nums = entry.target.querySelectorAll('.stat-num');
+        const targets = [30, 3, 0, 24, 100];
+        const suffixes = ['+', '', '', 'h', '%'];
+        nums.forEach((el, i) => animateCount(el, targets[i], suffixes[i]));
+        statsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  const statsBar = document.querySelector('.stats-bar');
+  if (statsBar) statsObserver.observe(statsBar);
+</script>
+</body>
+</html>
