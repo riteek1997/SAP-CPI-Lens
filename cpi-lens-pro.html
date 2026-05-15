@@ -410,6 +410,19 @@
   .annual-cta { flex-shrink: 0; }
   .annual-cta .btn-price { width: auto; min-width: 220px; padding-left: 28px; padding-right: 28px; }
   .pricing-footnote { text-align: center; color: var(--txt3); font-size: 13px; margin-top: 28px; max-width: 640px; margin-left: auto; margin-right: auto; }
+  .pricing-policy {
+    max-width: 720px; margin: 36px auto 0;
+    background: var(--bg1); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 28px 32px;
+    text-align: left;
+  }
+  .pricing-policy h3 { font-family: var(--head); font-size: 17px; font-weight: 600; margin-bottom: 12px; color: var(--txt); }
+  .pricing-policy p { font-size: 14px; color: var(--txt2); line-height: 1.7; }
+  .pricing-policy a { color: var(--amber); text-decoration: none; }
+  .pricing-policy a:hover { text-decoration: underline; }
+  .footer-support { margin-top: 16px; font-size: 14px; }
+  .footer-support a { color: var(--amber); text-decoration: none; }
+  .footer-support a:hover { text-decoration: underline; }
 
   /* BROWSERS */
   .browsers-row { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
@@ -1000,6 +1013,11 @@ Output: &lt;Order&gt;<br>
     </div>
   </div>
   <p class="pricing-footnote">Prices shown in INR with approximate USD equivalents. The free tier stays on your device at no cost.</p>
+  <div id="refunds" class="pricing-policy fade-up">
+    <h3>Refund &amp; Cancellation Policy</h3>
+    <p>Once CPI Lens Pro features are activated, we do not offer refunds. This is a non-recurring payment; your access is valid for one year. We will never charge you automatically. When your year is up, the extension will simply return to the free version, and you can choose to manually renew if you wish to continue using Pro features.</p>
+    <p style="margin-top:14px">Questions about billing or your subscription? Email <a href="mailto:support.cpilens@gmail.com">support.cpilens@gmail.com</a>.</p>
+  </div>
 </section>
 
 <!-- BROWSER SUPPORT -->
@@ -1046,7 +1064,8 @@ Output: &lt;Order&gt;<br>
         <span class="nav-logo-text">CPI Lens</span>
       </a>
       <p>The most comprehensive browser extension for SAP Cloud Platform Integration developers. Built with precision. Designed for speed.</p>
-      <div style="display:flex;gap:10px">
+      <p class="footer-support">Support: <a href="mailto:support.cpilens@gmail.com">support.cpilens@gmail.com</a></p>
+      <div style="display:flex;gap:10px;margin-top:16px">
         <a href="https://chromewebstore.google.com/detail/cpi-lens-sap-integration/hojcibdjgfibcpfkcgcepblnmmepinhh" target="_blank" rel="noopener noreferrer" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--txt2);text-decoration:none;font-size:12px">Chrome Web Store</a>
         <a href="https://microsoftedge.microsoft.com/addons/detail/cpi-lens-sap-integration/jccgihhnjabampjlacooeejjmcbbkgjf" target="_blank" rel="noopener noreferrer" style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;color:var(--txt2);text-decoration:none;font-size:12px">Edge Add-ons</a>
       </div>
@@ -1067,6 +1086,7 @@ Output: &lt;Order&gt;<br>
     <div class="footer-col">
       <h5>Legal</h5>
       <a href="#privacy">Privacy Policy</a>
+      <a href="#refunds">Refund &amp; Cancellation</a>
     </div>
   </div>
   <div class="footer-bottom">
